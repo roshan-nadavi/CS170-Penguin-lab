@@ -12,12 +12,48 @@ from typing import Callable, Dict
 from instance import Instance
 from solution import Solution
 from file_wrappers import StdinFileWrapper, StdoutFileWrapper
+from point import Point
+from point import distance_sq
 
 
 def solve_naive(instance: Instance) -> Solution:
     return Solution(
         instance=instance,
         towers=instance.cities,
+    )
+def solve_greedySetCover(instance: Instance) -> Solution:
+    #initialize the sets
+    pointCoverage = []
+    if instance.grid_side_length == 30:
+        pointCoverage = [[] for x in range(900)]
+    if instance.grid_side_length == 50:
+        pointCoverage = [[] for x in range(50*50)]
+    if instance.grid_side_length == 100:
+        pointCoverage = [[] for x in range(100*100)]
+    for x in range(instance.grid_side_length):
+        for y in range(instance.grid_side_length):
+            for i in range(x-instance.R_s, x+instance.R_s):
+                for j in range(y-instance.R_s, y+instance.R_s):
+                    if distance_sq(Point(x, y), Point(i,j)) <= instance.R_s**2:
+                        if Point(i, j) in instance.cities:
+                            pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
+    citiesLeft = instance.cities.copy()
+    pointsUsed = []
+        
+    while len(citiesLeft)==0:
+        optPoint = 0
+        coverage = len(pointCoverage[0])
+        for cover in range(len(pointCoverage)):
+            if len(pointCoverage[i]) > coverage:
+                optPoint = cover
+                coverage = len(pointCoverage[i])
+        pointsUsed.append(Point(optPoint/instance.grid_side_length, 
+                                optPoint % instance.grid_side_length))
+                
+        
+    return Solution(
+        instance=instance,
+        towers=pointsUsed,
     )
 
 
