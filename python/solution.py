@@ -36,8 +36,9 @@ class Solution:
                 if Point.distance_obj(city, tower) <= self.instance.coverage_radius:
                     break
             else:
+                #print(city)
                 return False
-
+        #print(len(set(self.towers)) - len(self.towers))
         return len(set(self.towers)) == len(self.towers)
 
     def deduplicate(self):

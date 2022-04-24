@@ -34,28 +34,30 @@ def solve_greedySetCover(instance: Instance) -> Solution:
         for y in range(instance.grid_side_length):
             for i in range(x-instance.R_s, x+instance.R_s):
                 for j in range(y-instance.R_s, y+instance.R_s):
-                    if (Point(x, y).distance_sq(Point(i,j)) ) <= instance.R_s**2:
+                    if ((Point(x, y).distance_sq(Point(i,j))**0.5 )) <= instance.R_s:
                         if Point(i, j) in instance.cities:
                             pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
     citiesLeft = instance.cities.copy()
     pointsUsed = []
         
-    while len(citiesLeft)==0:
+    while len(citiesLeft)>0:
+        #print(len(citiesLeft))
         optPoint = 0
         coverage = len(pointCoverage[0])
-        for cover in range(len(pointCoverage)):
+        for i in range(len(pointCoverage)):
             if len(pointCoverage[i]) > coverage:
-                optPoint = cover
+                optPoint = i
                 coverage = len(pointCoverage[i])
-        pointsUsed.append(Point(optPoint/instance.grid_side_length, 
-                                optPoint % instance.grid_side_length))
+        pointsUsed.append(Point(optPoint%instance.grid_side_length, 
+                                optPoint//instance.grid_side_length))
         #now remove all the points that are covered
         temp = pointCoverage[optPoint].copy()
+        #print(temp, optPoint)
         for singPoint in temp:
             for singleList in pointCoverage:
                 if singPoint in singleList:
                     singleList.remove(singPoint)
-                if singPoint not in citiesLeft:
+                if singPoint in citiesLeft:
                     citiesLeft.remove(singPoint)   
     #return solution
     return Solution(
@@ -65,7 +67,7 @@ def solve_greedySetCover(instance: Instance) -> Solution:
 
 
 SOLVERS: Dict[str, Callable[[Instance], Solution]] = {
-    "naive": solve_naive
+    "naive": solve_naive, "greedySetCover": solve_greedySetCover
 }
 
 
@@ -91,7 +93,7 @@ def main(args):
         solution = solver(instance)
         assert solution.valid()
         with outfile(args) as g:
-            print("# Penalty: ", solution.penalty(), file=g)
+            #print("# Penalty: ", solution.penalty(), file=g)
             solution.serialize(g)
 
 
