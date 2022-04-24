@@ -13,7 +13,7 @@ from instance import Instance
 from solution import Solution
 from file_wrappers import StdinFileWrapper, StdoutFileWrapper
 from point import Point
-from point import distance_sq
+#from point import distance_sq
 
 
 def solve_naive(instance: Instance) -> Solution:
@@ -34,7 +34,7 @@ def solve_greedySetCover(instance: Instance) -> Solution:
         for y in range(instance.grid_side_length):
             for i in range(x-instance.R_s, x+instance.R_s):
                 for j in range(y-instance.R_s, y+instance.R_s):
-                    if distance_sq(Point(x, y), Point(i,j)) <= instance.R_s**2:
+                    if (Point(x, y).distance_sq(Point(i,j)) ) <= instance.R_s**2:
                         if Point(i, j) in instance.cities:
                             pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
     citiesLeft = instance.cities.copy()
@@ -56,7 +56,8 @@ def solve_greedySetCover(instance: Instance) -> Solution:
                 if singPoint in singleList:
                     singleList.remove(singPoint)
                 if singPoint not in citiesLeft:
-                    citiesLeft.remove(singPoint)        
+                    citiesLeft.remove(singPoint)   
+    #return solution
     return Solution(
         instance=instance,
         towers=pointsUsed,
