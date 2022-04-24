@@ -49,8 +49,14 @@ def solve_greedySetCover(instance: Instance) -> Solution:
                 coverage = len(pointCoverage[i])
         pointsUsed.append(Point(optPoint/instance.grid_side_length, 
                                 optPoint % instance.grid_side_length))
-                
-        
+        #now remove all the points that are covered
+        temp = pointCoverage[optPoint].copy()
+        for singPoint in temp:
+            for singleList in pointCoverage:
+                if singPoint in singleList:
+                    singleList.remove(singPoint)
+                if singPoint not in citiesLeft:
+                    citiesLeft.remove(singPoint)        
     return Solution(
         instance=instance,
         towers=pointsUsed,
