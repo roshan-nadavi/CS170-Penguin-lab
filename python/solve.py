@@ -39,15 +39,30 @@ def solve_greedySetCover(instance: Instance) -> Solution:
                             pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
     citiesLeft = instance.cities.copy()
     pointsUsed = []
-        
+    #midpoint = (instance.grid_side_length*instance.grid_side_length)/2
+    def overlaps(currPoint):
+        overlap = 0
+        for aPoint in pointsUsed:
+            if (Point(currPoint%instance.grid_side_length, 
+                                currPoint//instance.grid_side_length).distance_sq(aPoint)) ** 0.5 <= instance.R_p:
+                overlap = overlap + 1;
+        return overlap
+            
+            
     while len(citiesLeft)>0:
+        #print("iteration")
         #print(len(citiesLeft))
         optPoint = 0
         coverage = len(pointCoverage[0])
+        penalty = overlaps(0)
         for i in range(len(pointCoverage)):
-            if len(pointCoverage[i]) > coverage:
-                optPoint = i
-                coverage = len(pointCoverage[i])
+            pointCovLength = len(pointCoverage[i])
+            if pointCovLength >= coverage:
+                tempPenalty = overlaps(i)
+                if tempPenalty < penalty or pointCovLength > coverage:
+                    optPoint = i
+                    coverage = len(pointCoverage[i])
+                    penalty = tempPenalty
         pointsUsed.append(Point(optPoint%instance.grid_side_length, 
                                 optPoint//instance.grid_side_length))
         #now remove all the points that are covered
@@ -57,8 +72,8 @@ def solve_greedySetCover(instance: Instance) -> Solution:
             for singleList in pointCoverage:
                 if singPoint in singleList:
                     singleList.remove(singPoint)
-                if singPoint in citiesLeft:
-                    citiesLeft.remove(singPoint)   
+            if singPoint in citiesLeft:
+                citiesLeft.remove(singPoint)   
     #return solution
     return Solution(
         instance=instance,
@@ -93,7 +108,7 @@ def main(args):
         solution = solver(instance)
         assert solution.valid()
         with outfile(args) as g:
-            #print("# Penalty: ", solution.penalty(), file=g)
+            print("# Penalty: ", solution.penalty(), file=g)
             solution.serialize(g)
 
 
