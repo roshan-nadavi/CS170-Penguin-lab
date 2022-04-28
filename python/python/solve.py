@@ -123,7 +123,7 @@ def solve_greedyTwoSetCover(instance: Instance) -> Solution:
             
             
     while len(citiesLeft)>0:
-        #print("iteration")
+        print("iteration")
         #print(len(citiesLeft))
         optPoint = 0
         optPoint2 = 0
