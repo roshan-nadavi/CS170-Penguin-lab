@@ -21,6 +21,18 @@ def solve_naive(instance: Instance) -> Solution:
         instance=instance,
         towers=instance.cities,
     )
+def solve_naive_better(instance: Instance) -> Solution:
+    tows = instance.cities
+    for i in range(len(tows)):
+        for j in range(len(tows)):
+            if tows[i].distance_sq(tows[j])**0.5 <= instance.R_s and i != j:
+                tows[j] = Point(-100, -100)
+    while Point(-100, -100) in tows:
+        tows.remove(Point(-100, -100)
+    return Solution(
+        instance=instance,
+        towers=tows,
+    )
 def solve_greedySetCover(instance: Instance) -> Solution:
     #initialize the sets
     pointCoverage = []
