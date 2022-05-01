@@ -67,3 +67,11 @@ To visualize a solution file for this instance as well, you could run
 ```bash
 python3 visualize.py my_input.in --with-solution my_soln.out out.svg
 ```
+
+## How to run program
+
+Basically however it was specified to solve for all inputs on terminal, do that. In the solve_all.py
+change to each of the different methods that are available to solve(all defined in the dictionary).
+Finally merge the outputs using merge.py.
+
+
