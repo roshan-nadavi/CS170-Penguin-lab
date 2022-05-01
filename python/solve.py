@@ -21,17 +21,94 @@ def solve_naive(instance: Instance) -> Solution:
         instance=instance,
         towers=instance.cities,
     )
-def solve_naive_better(instance: Instance) -> Solution:
-    tows = instance.cities
-    for i in range(len(tows)):
-        for j in range(len(tows)):
-            if tows[i].distance_sq(tows[j])**0.5 <= instance.R_s and i != j:
-                tows[j] = Point(-100, -100)
-    while Point(-100, -100) in tows:
-        tows.remove(Point(-100, -100)
+
+def solve_greedySetCoverWCaveat(instance: Instance) -> Solution:
+    #initialize the sets
+    pointCoverage = []
+    if instance.grid_side_length == 30:
+        pointCoverage = [[] for x in range(900)]
+    if instance.grid_side_length == 50:
+        pointCoverage = [[] for x in range(50*50)]
+    if instance.grid_side_length == 100:
+        pointCoverage = [[] for x in range(100*100)]
+    for x in range(instance.grid_side_length):
+        for y in range(instance.grid_side_length):
+            for i in range(x-instance.R_s, x+instance.R_s):
+                for j in range(y-instance.R_s, y+instance.R_s):
+                    if ((Point(x, y).distance_sq(Point(i,j))**0.5 )) <= instance.R_s:
+                        if Point(i, j) in instance.cities:
+                            pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
+    citiesLeft = instance.cities.copy()
+    pointsUsed = []
+        
+    while len(citiesLeft)>0:
+        #print(len(citiesLeft))
+        optPoint = 0
+        coverage = len(pointCoverage[0])
+        for i in range(len(pointCoverage)):
+            if len(pointCoverage[i]) >= coverage:
+                if len(pointCoverage[i]) >= coverage or i < instance.grid_side_length **2:
+                    optPoint = i
+                    coverage = len(pointCoverage[i])
+        pointsUsed.append(Point(optPoint%instance.grid_side_length, 
+                                optPoint//instance.grid_side_length))
+        #now remove all the points that are covered
+        temp = pointCoverage[optPoint].copy()
+        #print(temp, optPoint)
+        for singPoint in temp:
+            for singleList in pointCoverage:
+                if singPoint in singleList:
+                    singleList.remove(singPoint)
+                if singPoint in citiesLeft:
+                    citiesLeft.remove(singPoint)   
+    #return solution
     return Solution(
         instance=instance,
-        towers=tows,
+        towers=pointsUsed,
+    )
+
+def solve_greedySetCoverWOPenalty(instance: Instance) -> Solution:
+    #initialize the sets
+    pointCoverage = []
+    if instance.grid_side_length == 30:
+        pointCoverage = [[] for x in range(900)]
+    if instance.grid_side_length == 50:
+        pointCoverage = [[] for x in range(50*50)]
+    if instance.grid_side_length == 100:
+        pointCoverage = [[] for x in range(100*100)]
+    for x in range(instance.grid_side_length):
+        for y in range(instance.grid_side_length):
+            for i in range(x-instance.R_s, x+instance.R_s):
+                for j in range(y-instance.R_s, y+instance.R_s):
+                    if ((Point(x, y).distance_sq(Point(i,j))**0.5 )) <= instance.R_s:
+                        if Point(i, j) in instance.cities:
+                            pointCoverage[x+y*instance.grid_side_length].append(Point(i,j))
+    citiesLeft = instance.cities.copy()
+    pointsUsed = []
+        
+    while len(citiesLeft)>0:
+        #print(len(citiesLeft))
+        optPoint = 0
+        coverage = len(pointCoverage[0])
+        for i in range(len(pointCoverage)):
+            if len(pointCoverage[i]) > coverage:
+                optPoint = i
+                coverage = len(pointCoverage[i])
+        pointsUsed.append(Point(optPoint%instance.grid_side_length, 
+                                optPoint//instance.grid_side_length))
+        #now remove all the points that are covered
+        temp = pointCoverage[optPoint].copy()
+        #print(temp, optPoint)
+        for singPoint in temp:
+            for singleList in pointCoverage:
+                if singPoint in singleList:
+                    singleList.remove(singPoint)
+                if singPoint in citiesLeft:
+                    citiesLeft.remove(singPoint)   
+    #return solution
+    return Solution(
+        instance=instance,
+        towers=pointsUsed,
     )
 def solve_greedySetCover(instance: Instance) -> Solution:
     #initialize the sets
@@ -182,9 +259,24 @@ def solve_greedyTwoSetCover(instance: Instance) -> Solution:
         instance=instance,
         towers=pointsUsed,
     )
+def solve_naive_better(instance: Instance) -> Solution:
+    tows = instance.cities
+    for i in range(len(tows)):
+        for j in range(len(tows)):
+            if tows[i].distance_sq(tows[j])**0.5 <= instance.R_s and i != j:
+                tows[j] = Point(-100, -100)
+    while Point(-100, -100) in tows:
+        tows.remove(Point(-100, -100))
+    return Solution(
+        instance=instance,
+        towers=tows,
+    )
 SOLVERS: Dict[str, Callable[[Instance], Solution]] = {
     "naive": solve_naive, "greedySetCover": solve_greedySetCover,
-    "greedyTwoSetCover": solve_greedyTwoSetCover
+    "greedyTwoSetCover": solve_greedyTwoSetCover,
+    "greedySetCoverWOPenalty":solve_greedySetCoverWOPenalty,
+    "greedySetCoverWCaveat":solve_greedySetCoverWCaveat,
+    "betterNaive":solve_naive_better
 }
 
 
