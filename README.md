@@ -1,5 +1,13 @@
 # Spring 2022 CS170 Project Skeleton
 
+## How to run program
+
+Basically however it was specified to solve for all inputs on terminal, do that. In the solve_all.py
+change to each of the different methods that are available to solve(all defined in the dictionary). Like
+in solve_all call solve_naive(instance), solve_greedyTwoSetCover(instance), solve_greedySetCover(instance),
+solve_greedySetCoverWOPenalty(instance), solve_greedySetCoverWCaveat(instance), and
+solve_naive_better(instance). Finally merge the outputs using merge.py.
+
 ## Requirements
 
 A Python skeleton is available in the `python` subdirectory. The Python
@@ -68,10 +76,6 @@ To visualize a solution file for this instance as well, you could run
 python3 visualize.py my_input.in --with-solution my_soln.out out.svg
 ```
 
-## How to run program
 
-Basically however it was specified to solve for all inputs on terminal, do that. In the solve_all.py
-change to each of the different methods that are available to solve(all defined in the dictionary).
-Finally merge the outputs using merge.py.
 
 
